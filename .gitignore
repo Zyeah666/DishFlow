@@ -1,0 +1,23 @@
+**/target/
+.idea
+*.iml
+*.class
+
+# 注意：这里以前还写着 *Test.java 和 **/test/，把测试代码全部排除在仓库之外。
+# 支付链路测试和 AI 评测集是项目里最能说明"我真的写过"的部分，必须提交，所以把规则去掉了。
+# （评测类默认被环境变量开关跳过，不会在 mvn test 时产生模型调用费用）
+
+# ===== 本地配置与密钥，禁止提交（克隆后请复制 application-dev.yml.example 修改）=====
+dishflow-server/src/main/resources/application-dev.yml
+application-local.yml
+*.local.yml
+
+# 微信支付商户私钥/证书（做到那一章会用到）
+*.pem
+*.p12
+*.key
+
+# 日志与 IDE 产物
+*.log
+logs/
+out/
