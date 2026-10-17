@@ -1,0 +1,51 @@
+# ===================================================================
+# 本地开发配置模板
+#
+# 使用方式：把本文件复制一份并重命名为 application-dev.yml，再填入你自己的值
+#   Windows(PowerShell):  Copy-Item application-dev.yml.example application-dev.yml
+#   Git Bash:            cp application-dev.yml.example application-dev.yml
+#
+# application-dev.yml 已经写进 .gitignore，不会被提交，密钥不会泄露。
+# 项目启动时激活的是 dev profile（见 application.yml 里的 spring.profiles.active: dev），
+# 缺少 application-dev.yml 会报 "Could not resolve placeholder 'sky.datasource.host'"。
+# ===================================================================
+sky:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: localhost
+    port: 3306
+    database: sky_take_out          # 改成你自己的库名
+    username: root
+    password: 你的MySQL密码          # 不要提交真实密码
+  alioss:
+    # 注意：这里只写地域节点，不要带 https:// 前缀
+    # 带前缀会让 AliOssUtil 拼出 https://bucket.https://oss-xxx/... 这种畸形地址，图片显示不出来
+    endpoint: oss-cn-beijing.aliyuncs.com   # 必须和桶的实际地域一致，去 OSS 控制台「概览」抄
+    accessKeyId: 你的AccessKeyId              # 建议用 RAM 子账号的 AK，不要用主账号
+    accessKeySecret: 你的AccessKeySecret
+    bucketName: 你的Bucket名称
+    # 提示：桶的读写权限要设成「公共读」，否则上传成功浏览器也打不开（403）
+  redis:
+    host: localhost
+    port: 6379
+    password:                      # 本机 Redis 没设密码就留空，不要写 null
+    database: 8
+  # 微信支付相关（sky.pay.channel=wechat 时才需要，个人主体申请不到商户号）
+  wechat:
+    appid: 你的小程序appid
+    secret: 你的小程序secret
+    mchid: 商户号
+    mchSerialNo: 商户API证书序列号
+    privateKeyFilePath: /绝对路径/apiclient_key.pem
+    apiV3Key: APIv3密钥
+    weChatPayCertFilePath: /绝对路径/wxp_cert.pem
+    notifyUrl: https://你的域名/user/order/notify
+    refundNotifyUrl: https://你的域名/user/order/refundNotify
+  # AI 辅助能力（订单备注结构化解析、经营洞察）
+  # 不配 provider 时默认 mock：不联网、不花钱、结果确定，刚 clone 下来也能把项目跑起来
+  # 想用真实模型：provider 填 deepseek 并填自己的 key
+  # 这里只写"每人不一样"的两项，其余参数（base-url/model/timeout-ms/daily-quota…）
+  # 的默认值统一在 com.sky.properties.AiProperties 里，需要时按同名键覆盖
+  ai:
+    provider: mock            # mock | deepseek
+    api-key: 你的DeepSeekKey   # sk-xxx，只在本地填，不要提交

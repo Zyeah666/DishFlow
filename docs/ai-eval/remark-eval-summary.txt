@@ -1,0 +1,9 @@
+AI 备注解析评测（provider 见 ai_call_log，样本 59 条）
+辣度 spicy：51/51 = 100.0%
+忌口 noIngredients：45/46 = 97.83%
+餐具 utensil：53/53 = 100.0%
+配送 delivery：50/51 = 98.04%
+加急 urgent：51/51 = 100.0%
+失败样本 2 条（明细见 ai-eval-result.csv）
+备注：葱花香菜都不要 || 期望 {} || 实际 {"deliveryNote":"unknown","noIngredients":["葱花","香菜"],"spicy":"unknown","urgent":false,"utensil":"unknown"}
+备注：放保安室 || 期望 {} || 实际 {"deliveryNote":"unknown","noIngredients":[],"spicy":"unknown","urgent":false,"utensil":"unknown"}

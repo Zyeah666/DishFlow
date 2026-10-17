@@ -1,0 +1,81 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev
+  main:
+    allow-circular-references: true
+  application:
+    name: Digital-Operation-of-Catering
+  datasource:
+    druid:
+      driver-class-name: ${sky.datasource.driver-class-name}
+      url: jdbc:mysql://${sky.datasource.host}:${sky.datasource.port}/${sky.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${sky.datasource.username}
+      password: ${sky.datasource.password}
+  redis:
+    host: ${sky.redis.host}
+    port: ${sky.redis.port}
+    password: ${sky.redis.password}
+    database: ${sky.redis.database}
+
+mybatis:
+  #mapper配置文件
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.dishflow.entity
+  configuration:
+    #开启驼峰命名
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com:
+      dishflow:
+        mapper: debug
+        service: info
+        controller: info
+
+
+sky:
+  jwt:
+    # 设置jwt签名加密时使用的秘钥
+    admin-secret-key: zyeah6666
+    # 设置jwt过期时间
+    admin-ttl: 7200000
+    # 设置前端传递过来的令牌名称
+    admin-token-name: token
+    user-secret-key: atopos6666
+    user-ttl: 7200000
+    user-token-name: authentication
+  alioss:
+    endpoint: ${sky.alioss.endpoint}
+    accessKeyId: ${sky.alioss.access-key-id}
+    accessKeySecret:  ${sky.alioss.access-key-secret}
+    bucketName: ${sky.alioss.bucket-name}
+  wechat:
+    appid: ${sky.wechat.appid}
+    secret: ${sky.wechat.secret}
+  pay:
+    # 支付渠道开关：mock = 本地模拟支付（调用即扣款成功，不需要商户号）
+    #               wechat = 微信支付 v3（需要 mchid + APIv3 密钥 + 商户证书 + 公网回调地址）
+    # 不配置时默认走 mock，避免误切到微信后因为缺证书而下单失败
+    channel: mock
+  ai:
+    # ===== 这里只放"会因环境/人而异"的开关，其余参数的默认值统一在 AiProperties 里定义 =====
+    # 不要在 yml 里重复写一遍默认值：两处都写就会出现"改了 Java 却不生效"的配置漂移。
+    # 想临时改超时/模型/配额，按需把下面注释掉的键加进来覆盖即可（键名用中划线，对应 Java 的驼峰）。
+
+    # AI 能力总开关。false 时所有解析请求直接返回空标签，下单行为完全退回没接 AI 之前的样子
+    enabled: true
+    # mock = 离线关键词规则，不联网、不花钱、结果确定（默认值，保证刚 clone 的人能直接跑起来）
+    # deepseek = 真实大模型调用（OpenAI 兼容协议），需要在 application-dev.yml 里配 api-key
+    provider: mock
+    # 不要把真实 key 写在这里！写在 application-dev.yml（该文件已在 .gitignore 中）
+    api-key: ""
+
+    # 可覆盖项（默认值见 com.dishflow.properties.AiProperties）：
+    #   base-url / model / timeout-ms / max-tokens / daily-quota / max-input-length / disable-thinking
+    # 示例：把下单解析的超时放宽到 2 秒
+    #   timeout-ms: 2000
+

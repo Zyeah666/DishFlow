@@ -21,3 +21,6 @@ application-local.yml
 *.log
 logs/
 out/
+
+# 仓库重建时的本地备份，禁止提交
+.git.old-backup/
