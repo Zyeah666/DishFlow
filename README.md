@@ -19,12 +19,10 @@
 - 支付：`sky.pay.channel` 默认 `mock`，调用即返回成功，不需要商户号
 
 ```bash
-# 1. 准备数据库
-#    仓库内 sql/ai-module.sql 只包含 AI 模块的增量变更（orders.ai_tags 列 + ai_call_log 表），
-#    不含基础建表语句。完整表结构需从本地数据库导出：
-mysqldump -uroot -p --no-data <你的库名> > sql/schema.sql
-mysql -uroot -p <你的库名> < sql/schema.sql
-mysql -uroot -p <你的库名> < sql/ai-module.sql   # 增量脚本，重复执行安全
+# 1. 建库并初始化表结构（仓库已提供完整 DDL，12 张表）
+mysql -uroot -p -e "CREATE DATABASE IF NOT EXISTS dishflow DEFAULT CHARSET utf8mb4"
+mysql -uroot -p dishflow < sql/schema.sql        # 基础表结构
+mysql -uroot -p dishflow < sql/ai-module.sql     # AI 模块增量变更，已包含在 schema.sql 中，重复执行安全
 
 # 2. 复制配置模板并填入本机连接
 cd dishflow-server/src/main/resources
@@ -36,7 +34,9 @@ mvn clean package -DskipTests
 java -jar dishflow-server/target/dishflow-server-1.0-SNAPSHOT.jar
 ```
 
-> **注意**：`sql/` 目录目前只有 AI 模块的增量脚本。基础表（`orders`、`dish`、`category` 等）的建表语句需按上面第 1 步从本地库导出后一并提交，否则克隆后无法直接启动。
+> `sql/schema.sql` 由 `mysqldump --no-data` 导出，**只含表结构不含数据**。
+> `schema.sql` 里已经包含 `orders.ai_tags` 列与 `ai_call_log` 表，所以 `ai-module.sql` 可以不执行，
+> 它的作用是记录 AI 模块相对基础表结构做过哪些增量变更。
 
 启动后访问接口文档：`http://localhost:8080/doc.html`（Knife4j）
 
